@@ -11,7 +11,7 @@ class GraphConvolution(Module):
     Simple GCN layer, similar to https://arxiv.org/abs/1609.02907
     """
 
-    def __init__(self, in_features, out_features, bias=True):
+    def __init__(self, in_features, out_features, bias=True, init="kipf"):
         super(GraphConvolution, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -20,13 +20,28 @@ class GraphConvolution(Module):
             self.bias = Parameter(torch.FloatTensor(out_features))
         else:
             self.register_parameter('bias', None)
-        self.reset_parameters()
+        self.reset_parameters(init)
 
-    def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.weight.size(1))
-        self.weight.data.uniform_(-stdv, stdv)
-        if self.bias is not None:
-            self.bias.data.uniform_(-stdv, stdv)
+    def reset_parameters(self, init):
+        print(init)
+        if init == "kipf":
+          stdv = 1. / math.sqrt(self.weight.size(1))
+          self.weight.data.uniform_(-stdv, stdv)
+          if self.bias is not None:
+              self.bias.data.uniform_(-stdv, stdv)
+        
+        elif init == "xavier":
+          torch.nn.init.xavier_uniform_(self.weight)
+          if self.bias is not None:
+              torch.nn.init.zeros_(self.bias)
+        
+        elif init == "kaiming":
+          torch.nn.init.kaiming_uniform_(self.weight)
+          if self.bias is not None:
+              torch.nn.init.zeros_(self.bias)
+        
+        else:
+          print("Unrecognized initialization schema!")
 
     def forward(self, input, adj):
         support = torch.mm(input, self.weight)

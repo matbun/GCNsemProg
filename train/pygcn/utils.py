@@ -12,7 +12,7 @@ def encode_onehot(labels):
     return labels_onehot
 
 
-def load_data(path="../data/cora/", dataset="cora"):
+def load_data(path="../data/cora/", dataset="cora", A_norm="row"):
     """Load citation network dataset (cora only for now)"""
     print('Loading {} dataset...'.format(dataset))
 
@@ -36,7 +36,7 @@ def load_data(path="../data/cora/", dataset="cora"):
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
     features = normalize(features)
-    adj = normalize(adj + sp.eye(adj.shape[0]))
+    adj = normalize_symm(adj + sp.eye(adj.shape[0])) if A_norm is "symm" else normalize(adj + sp.eye(adj.shape[0]))
 
     idx_train = range(140)
     idx_val = range(200, 500)
@@ -59,7 +59,19 @@ def normalize(mx):
     r_inv = np.power(rowsum, -1).flatten()
     r_inv[np.isinf(r_inv)] = 0.
     r_mat_inv = sp.diags(r_inv)
+    # D-1 A
     mx = r_mat_inv.dot(mx)
+    return mx
+
+def normalize_symm(mx):
+    """Symmetric-normalize sparse matrix"""
+    rowsum = np.array(mx.sum(1))
+    r_inv = np.power(rowsum, -1/2).flatten()
+    r_inv[np.isinf(r_inv)] = 0.
+    r_mat_inv = sp.diags(r_inv)
+    # D-1/2 A D-1/2
+    mx_1 = r_mat_inv.dot(mx) # D-1/2 A
+    mx = mx_1.dot(r_mat_inv)
     return mx
 
 
