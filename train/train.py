@@ -1,3 +1,6 @@
+"""
+Original train script from Kipf: https://github.com/tkipf/pygcn.git
+"""
 from __future__ import division
 from __future__ import print_function
 
