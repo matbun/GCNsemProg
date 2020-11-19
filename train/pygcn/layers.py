@@ -23,7 +23,7 @@ class GraphConvolution(Module):
         self.reset_parameters(init)
 
     def reset_parameters(self, init):
-        print(init)
+        
         if init == "kipf":
           stdv = 1. / math.sqrt(self.weight.size(1))
           self.weight.data.uniform_(-stdv, stdv)
