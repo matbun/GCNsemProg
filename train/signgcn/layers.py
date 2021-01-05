@@ -6,13 +6,13 @@ from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
 
 
-class GraphConvolution(Module):
+class SIGNGraphConvolution(Module):
     """
-    Simple GCN layer, similar to https://arxiv.org/abs/1609.02907
+    SIGN GCN layer
     """
 
     def __init__(self, in_features, out_features, bias=True, init="kipf"):
-        super(GraphConvolution, self).__init__()
+        super(SIGNGraphConvolution, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.weight = Parameter(torch.FloatTensor(in_features, out_features))
@@ -43,10 +43,9 @@ class GraphConvolution(Module):
         else:
           print("Unrecognized initialization schema!")
 
-    def forward(self, input, adj):
-        # Input: features matrix. X, for instance
-        support = torch.mm(input, self.weight)
-        output = torch.spmm(adj, support)
+    def forward(self, input):
+        # Input: precomputed features matrix adj product. AX, for instance
+        output = torch.mm(input, self.weight)
         if self.bias is not None:
             return output + self.bias
         else:

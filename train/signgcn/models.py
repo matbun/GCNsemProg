@@ -1,14 +1,26 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from pygcn.layers import GraphConvolution
+from signgcn.layers import SIGNGraphConvolution
 
 
-class GCN(nn.Module):
-    def __init__(self, nfeat, nhid, nclass, dropout, init="kipf"):
-        super(GCN, self).__init__()
+class SIGN(nn.Module):
+    self.gcs = []
 
-        self.gc1 = GraphConvolution(nfeat, nhid, init)
-        self.gc2 = GraphConvolution(nhid, nclass, init)
+    def __init__(self, nfeat, nhid, nclass, nlayers, dropout, init="kipf"):
+        super(SIGN, self).__init__()
+
+        # nfeat: d. Feature space dimension
+        # nhid: d'. Feature space dimension after convolution layer
+        # nclass: # classes
+        # nlayers: numbe of parallel convolutions
+
+        # Graph convo layers
+        for i in range(nlayers):
+          self.gcs.append(
+            SIGNGraphConvolution(nfeat, nhid, init)
+          )
+        # Final linear layer
+        self.omega = nn.Linear(nlayers*nhid, nclass)
         self.dropout = dropout
 
     def forward(self, x, adj):
