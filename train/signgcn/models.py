@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 import torch.nn.functional as F
 from signgcn.layers import SIGNGraphConvolution
 
@@ -13,7 +14,7 @@ class SIGN(nn.Module):
         # nlayers: numbe of parallel convolutions
 
         # Graph convo layers
-        self.gcs = []
+        self.gcs = nn.ModuleList()
         for i in range(nlayers):
           self.gcs.append(
             SIGNGraphConvolution(nfeat, nhid, init)
