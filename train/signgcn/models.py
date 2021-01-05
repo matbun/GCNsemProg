@@ -23,8 +23,20 @@ class SIGN(nn.Module):
         self.omega = nn.Linear(nlayers*nhid, nclass)
         self.dropout = dropout
 
-    def forward(self, x, adj):
-        x = F.relu(self.gc1(x, adj))
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = self.gc2(x, adj)
+    def forward(self, precomp_ax_list):
+        if(len(precomp_ax_list) != len(self.gcs)):
+          print("There is an inconsistency in the number of layers and number of precomputed adj matrices products with features")
+          return None
+
+        prev_x = None
+        for i, ax in enumerate(precomp_ax_list):
+          x = self.gcs[i](ax)
+          # concat
+          if prev_x is not None:
+            x = torch.cat([prev_x, x], dim=1)
+          prev_x = x
+
+        x = F.relu(x)
+        #x = F.dropout(x, self.dropout, training=self.training)
+        x = self.omega(x)
         return F.log_softmax(x, dim=1)
