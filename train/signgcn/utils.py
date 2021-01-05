@@ -77,8 +77,8 @@ def load_data2(path="../data/cora/", dataset="cora", A_norm="row"):
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
     features = normalize(features)
-    adj = normalize_symm(adj + sp.eye(adj.shape[0])) if A_norm is "symm" else normalize(adj + sp.eye(adj.shape[0]))
-
+    #adj = normalize_symm(adj + sp.eye(adj.shape[0])) if A_norm is "symm" else normalize(adj + sp.eye(adj.shape[0]))
+    adj = normalize_symm(adj) if A_norm is "symm" else normalize(adj)
     idx_train = range(140)
     idx_val = range(200, 500)
     idx_test = range(500, 1500)
