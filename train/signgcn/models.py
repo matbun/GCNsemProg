@@ -4,8 +4,6 @@ from signgcn.layers import SIGNGraphConvolution
 
 
 class SIGN(nn.Module):
-    self.gcs = []
-
     def __init__(self, nfeat, nhid, nclass, nlayers, dropout, init="kipf"):
         super(SIGN, self).__init__()
 
@@ -15,6 +13,7 @@ class SIGN(nn.Module):
         # nlayers: numbe of parallel convolutions
 
         # Graph convo layers
+        self.gcs = []
         for i in range(nlayers):
           self.gcs.append(
             SIGNGraphConvolution(nfeat, nhid, init)
