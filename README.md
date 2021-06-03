@@ -4,4 +4,4 @@ In this project I carried out at EURECOM university, in collaboration with the r
 - A research on the pitfalls of anomaly detection on huge graphs (like financial graphs)
 - The implementation of a solution of non-trivial problem of minibatching during GCN training.    
 
-In this repository you can also find my report, concerning the whole analysis and research I carried out ("GCN__AnomDetect_EURECOM.pdf").
+In this repository you can also find my report, concerning the whole analysis and research I carried out (GCN__AnomDetect_EURECOM).
